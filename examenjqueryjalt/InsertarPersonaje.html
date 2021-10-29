@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>//SCRIPT CARGAR NAVBAR
+        $(document).ready(function() {
+            $("#nav").load("./Principal.html");
+        });
+    </script>
+    <div id="nav"></div>
+    <div class="container">
+        <h1>Insertar Personaje </h1>
+
+        <div className="form-group row">
+            <label>
+                Nombre
+            </label>
+            <input type="text"
+            id="cajanombre"
+           />
+        </div>
+        <div className="form-group row">
+            <label>
+                Serie
+            </label>
+            <select id="selectseries"></select>
+            <script>//CARGAR SELECT SERIES
+            $(document).ready(function(){
+                    cargarSeries();                  
+                })
+                 function cargarSeries(){
+                    var request = "/api/Series";
+                   
+                    $.ajax({
+                        "url": urlapi+request,
+                        "method": "GET",
+                        success: function(data){
+                            $.each(data, function(index, serie){
+                                
+                                var option = $("<option>", {
+                                    "text": serie.nombre,
+                                    "value": serie.idSerie
+                                })
+                               
+                                $("#selectseries").append(option);
+                            })
+                            
+                        }
+                    })
+                }
+            </script>
+        </div>
+        <div className="form-group row">
+            <label>
+                Imagen
+            </label>
+            <input type="text"
+            id="cajaimg"
+            />
+        </div>
+       
+        <button id="insertar" class="btn btn-info">
+            Nuevo personaje
+        </button>
+
+    <a class="btn btn-success" href="Principal.html">Volver</a>
+    <script> //SCRIPT INSERTAR APUESTA
+    urlapi="https://apiseriespersonajes.azurewebsites.net";
+                        
+        $("#insertar").click(function(){
+            var request = "/api/Personajes";
+            console.log("dentro de insertar persj");
+            
+            var nom = $("#cajanombre").val();
+            var img = $("#cajaimg").val();
+            var idserie = $("#selectseries").val();
+
+            var personaje = new Object();
+            personaje.idPersonaje = 0;
+            personaje.nombre = nom;
+            personaje.imagen = img;
+            personaje.idSerie = parseInt(idserie);
+         
+
+            var json = JSON.stringify(personaje);
+            console.log(json);
+            $.ajax({
+                "url": urlapi+request,
+                "method": "POST",
+                "data": json,
+                "contentType": "application/JSON",
+                success : function(){
+                    console.log("personaje insertada");
+                    window.location.replace("SeriesPersonajes.html?idSerie="+idserie);
+                }
+            });
+        });
+    </script>
+    </div>
+</body>
+</html>

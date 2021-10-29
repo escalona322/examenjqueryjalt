@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>//SCRIPT CARGAR NAVBAR
+        $(document).ready(function() {
+            $("#nav").load("./Principal.html");
+        });
+    </script>
+    <div id="nav"></div>
+    <div class="container">
+        <h1>Detalles Serie</h1>
+        <div class="container" id="detallesserie">
+            <script>//SCRIPT CARGAR DETALLES SERIE
+                urlapi="https://apiseriespersonajes.azurewebsites.net"
+                $(document).ready(function(){
+                    cargarDetallesSerie();
+                })
+                function cargarDetallesSerie(){
+                    const urlSearchParams = new URLSearchParams(window.location.search);
+                    const params = Object.fromEntries(urlSearchParams.entries());
+                    
+                    var idSerie =  params.idSerie;
+                    var request = "/api/Series/"+idSerie;
+                 
+                     $.ajax({
+                         "url": urlapi+request,
+                         "method": "GET",
+                             success: function(data){
+                          
+                                console.log(data)
+                                var h1nom = $("<h1>", {
+                                    "text": data.nombre,
+                                })
+                                var img = $("<img>", {
+                                    "src": data.imagen,
+                                    "height": "250px",
+                                    "width": "180px"
+                                })
+                                var h2cha = $("<h2>", {
+                                    "text": "IMBD: "+data.puntuacion
+                                })
+                                
+                                $("#detallesserie").append(h1nom);
+                                $("#detallesserie").append(img);
+                                $("#detallesserie").append(h2cha);
+                                                    
+                      }
+                     })
+                }
+            </script>       
+        </div>
+        <div class="container" id="linktablapersonajes">
+            <script>
+                $(document).ready(function(){
+                    crearLinkTablaPersonajes();
+                    function crearLinkTablaPersonajes() {
+                        const urlSearchParams = new URLSearchParams(window.location.search);
+                        const params = Object.fromEntries(urlSearchParams.entries());
+                        var linktablajugadores = $("<a>", {
+                            "text": "Personajes",
+                            "href": "SeriesPersonajes.html?idSerie="+params.idSerie,
+                            "class": "btn btn-info"
+                        })
+                  
+                        $("#linktablapersonajes").append(linktablajugadores)
+                    }
+                })
+            </script>
+        </div>
+    </div>
+
+</body>
+</html>

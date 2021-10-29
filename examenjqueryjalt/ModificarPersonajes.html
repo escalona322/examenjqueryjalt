@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>//SCRIPT CARGAR NAVBAR
+        $(document).ready(function() {
+            $("#nav").load("./Principal.html");
+        });
+    </script>
+    <div id="nav"></div>
+    <div class="container">
+        <h1>Modificar Personajes</h1>
+        <div class="container">
+            <script>//SCRIPT CARGAR options SERIES y PERSONAJES
+                urlapi="https://apiseriespersonajes.azurewebsites.net";
+                $(document).ready(function(){
+                    cargarSeries();
+                    cargarPersonajes();
+                })
+                function cargarSeries(){
+                    var request = "/api/Series";
+                   
+                    $.ajax({
+                        "url": urlapi+request,
+                        "method": "GET",
+                        success: function(data){
+                            $.each(data, function(index, serie){
+                                
+                                var option = $("<option>", {
+                                    "text": serie.nombre,
+                                    "value": serie.idSerie
+                                })
+                               
+                                $("#selectseries").append(option);
+                            })
+                            
+                        }
+                    })
+                }
+                function cargarPersonajes(){
+                    var request = "/api/Personajes";
+                   
+                    $.ajax({
+                        "url": urlapi+request,
+                        "method": "GET",
+                        success: function(data){
+                            $.each(data, function(index, pj){
+                                
+                                var option = $("<option>", {
+                                    "text": pj.nombre,
+                                    "value": pj.idPersonaje
+                                })
+                               
+                                $("#selectpersonajes").append(option);
+                            })
+                            
+                        }
+                    })
+                }
+            </script>
+    
+            <div class="form-group row">
+                <label>
+                    Seleccione una serie
+                </label>
+                <select id="selectseries"></select>
+            </div>
+            <div class="form-group row">
+                <label>
+                    Seleccione un personaje
+                </label>
+                <select id="selectpersonajes"></select>
+            </div>
+            <button id="botonmodificar"class="btn btn-info">
+                Modificar Personaje
+            </button>
+            <script>//SCRIPT PARA MODIFICAR EL PERSONAJE
+                urlapi="https://apiseriespersonajes.azurewebsites.net";
+                        
+                        $("#botonmodificar").click(function(){
+                            var request = "/api/Personajes/"+$("#selectpersonajes").val()+"/"+$("#selectseries").val();
+                                 
+                            $.ajax({
+                                "url": urlapi+request,
+                                "method": "PUT",
+                                "contentType": "application/JSON",
+                                success : function(){
+                                    console.log("personaje modificado");
+                                    window.location.replace("SeriesPersonajes.html?idSerie="+$("#selectseries").val());
+                                }
+                            });
+                        });
+            </script>
+            <div id="contpj">
+
+            </div>
+            <div id="contserie">
+
+            </div>
+            
+            <script>//SCRIPT DIBUJAR AL CAMBIAR EL SELECT
+                 urlapi="https://apiseriespersonajes.azurewebsites.net";
+                $("#selectpersonajes").change(function(){
+                    $("#contpj").text("");
+                    var request = "/api/Personajes/"+$("#selectpersonajes").val()
+                    $.ajax({
+                        "url": urlapi+request,
+                        "method": "GET",
+                        success: function(data){                              
+                                var h1nom = $("<h1>", {
+                                    "text": data.nombre,
+                                })
+                                var img = $("<img>", {
+                                    "src": data.imagen,
+                                    "height": "200px",
+                                    "width": "160px"
+                                })
+                               
+                                $("#contpj").append(h1nom);
+                                $("#contpj").append(img);
+                            
+                        }
+                    })
+                })
+                $("#selectseries").change(function(){
+                    var request = "/api/Series/"+$("#selectseries").val();
+                    $("#contserie").text("");
+                    $.ajax({
+                        "url": urlapi+request,
+                        "method": "GET",
+                        success: function(data){                              
+                                var h1nom = $("<h1>", {
+                                    "text": data.nombre,
+                                })
+                                var img = $("<img>", {
+                                    "src": data.imagen,
+                                    "height": "200px",
+                                    "width": "160px"
+                                })
+                               
+                                $("#contserie").append(h1nom);
+                                $("#contserie").append(img);
+                            
+                        }
+                    })
+                })
+            </script>
+    </div>
+</body>
+</html>
